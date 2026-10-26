@@ -1,0 +1,25 @@
+# Production container for balloon-bot.
+# Deploy: docker compose up -d --build
+name: balloon-bot
+
+services:
+  app:
+    image: balloon-bot:latest
+    container_name: balloon-bot
+    build:
+      context: .
+    network_mode: host
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./data:/app/data
+    user: "1000:1000"
+    read_only: true
+    tmpfs:
+      - /tmp
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    init: true
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options: { max-size: 10m, max-file: "3" }
